@@ -23,7 +23,7 @@ export const OverviewTraffic = (props) => {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await fetch("http://localhost:8000/backend/api/services/");
+        const response = await fetch("https://handycreations.co.ke/backend/api/services/");
         const data = await response.json();
         // const series = data.map((service) => service.percentage);
         

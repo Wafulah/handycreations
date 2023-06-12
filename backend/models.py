@@ -3,8 +3,18 @@ from django.core.exceptions import ValidationError
 from datetime import date
 from django.db.models import Sum, Case, When, DecimalField, Value
 from django.db.models import Subquery, OuterRef, F
-# Create your models here.
+from django.contrib.auth.models import User
 
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    avatar = models.ImageField(upload_to='avatars/')
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    isAdmin = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user.username
 
 class HomeTag(models.Model):
     name = models.CharField(max_length=100)
@@ -125,13 +135,15 @@ class Order(models.Model):
             total_profit=Sum('profit'))['total_profit']
 
         # Calculate total_profit only for orders where profit is not None
-        total_profit = Order.objects.exclude(profit=None).aggregate(total_profit=Sum('profit'))['total_profit']
+        total_profit = Order.objects.exclude(profit=None).aggregate(
+            total_profit=Sum('profit'))['total_profit']
 
-        Service.objects.update(amount=0, percentage=0)    
+        Service.objects.update(amount=0, percentage=0)
         # Calculate the profit and percentage for each service
         if total_profit != 0:
             for service in Service.objects.all():
-                service_profit = Order.objects.filter(service=service, profit__isnull=False).aggregate(service_profit=Sum('profit'))['service_profit']
+                service_profit = Order.objects.filter(service=service, profit__isnull=False).aggregate(
+                    service_profit=Sum('profit'))['service_profit']
                 if service_profit is not None:
                     service.amount += service_profit
                 else:

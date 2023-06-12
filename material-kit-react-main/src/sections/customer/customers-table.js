@@ -37,7 +37,7 @@ export const CustomersTable = (props) => {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const response = await fetch('http://localhost:8000/backend/api/customers/');
+        const response = await fetch('https://handycreations.co.ke/backend/api/customers/');
         const data = await response.json();
         setCustomers(data);
         setTotalCustomers(data.length);

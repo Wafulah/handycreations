@@ -25,7 +25,7 @@ export const OverviewLatestProducts = (props) => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('http://localhost:8000/backend/api/latest-products/');
+        const response = await fetch('https://handycreations.co.ke/backend/api/latest-products/');
         const data = await response.json();
         setProducts(data);
       } catch (error) {

@@ -59,7 +59,7 @@ export const Order = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/backend/api/orders/",
+        "https://handycreations.co.ke/backend/api/orders/",
         values
       );
       console.log("Order created successfully:", response.data);

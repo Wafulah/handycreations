@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import Head from 'next/head';
 import NextLink from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import {
@@ -22,28 +22,41 @@ import { Layout as AuthLayout } from 'src/layouts/auth/layout';
 const Page = () => {
   const router = useRouter();
   const auth = useAuth();
-  const [method, setMethod] = useState('email');
+  const [method, setMethod] = useState('username');
   const formik = useFormik({
     initialValues: {
-      email: 'demo@devias.io',
-      password: 'Password123!',
+      username: '',
+      password: '',
       submit: null
     },
     validationSchema: Yup.object({
-      email: Yup
-        .string()
-        .email('Must be a valid email')
+      username: Yup.string()
         .max(255)
-        .required('Email is required'),
-      password: Yup
-        .string()
+        .required('Username is required'),
+      password: Yup.string()
         .max(255)
         .required('Password is required')
     }),
     onSubmit: async (values, helpers) => {
       try {
-        await auth.signIn(values.email, values.password);
-        router.push('/');
+        const csrftoken = getCookie('csrftoken'); // Retrieve the CSRF token from cookies
+        const response = await fetch('https://handycreations.co.ke/backend/api/login/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken // Include the CSRF token in the request headers
+          },
+          body: JSON.stringify(values)
+        });
+
+        if (response.ok) {
+          const user = await response.json();
+          auth.signIn(user);
+          router.push('/');
+        } else {
+          const errorData = await response.text();
+          throw new Error(errorData);
+        }
       } catch (err) {
         helpers.setStatus({ success: false });
         helpers.setErrors({ submit: err.message });
@@ -52,27 +65,21 @@ const Page = () => {
     }
   });
 
-  const handleMethodChange = useCallback(
-    (event, value) => {
-      setMethod(value);
-    },
-    []
-  );
+  // Function to retrieve the CSRF token from cookies
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
 
-  const handleSkip = useCallback(
-    () => {
-      auth.skip();
-      router.push('/');
-    },
-    [auth, router]
-  );
+  const handleMethodChange = useCallback((event, value) => {
+    setMethod(value);
+  }, []);
 
   return (
     <>
       <Head>
-        <title>
-          Login | Devias Kit
-        </title>
+        <title>Login | Handy Creation</title>
       </Head>
       <Box
         sx={{
@@ -92,62 +99,35 @@ const Page = () => {
           }}
         >
           <div>
-            <Stack
-              spacing={1}
-              sx={{ mb: 3 }}
-            >
-              <Typography variant="h4">
-                Login
-              </Typography>
-              <Typography
-                color="text.secondary"
-                variant="body2"
-              >
+            <Stack spacing={1} sx={{ mb: 3 }}>
+              <Typography variant="h4">Login</Typography>
+              <Typography color="text.secondary" variant="body2">
                 Don&apos;t have an account?
                 &nbsp;
-                <Link
-                  component={NextLink}
-                  href="/auth/register"
-                  underline="hover"
-                  variant="subtitle2"
-                >
+                <Link component={NextLink} href="/auth/register" underline="hover" variant="subtitle2">
                   Register
                 </Link>
               </Typography>
             </Stack>
-            <Tabs
-              onChange={handleMethodChange}
-              sx={{ mb: 3 }}
-              value={method}
-            >
-              <Tab
-                label="Email"
-                value="email"
-              />
-              <Tab
-                label="Phone Number"
-                value="phoneNumber"
-              />
+            <Tabs onChange={handleMethodChange} sx={{ mb: 3 }} value={method}>
+              <Tab label="Username" value="username" />
             </Tabs>
-            {method === 'email' && (
-              <form
-                noValidate
-                onSubmit={formik.handleSubmit}
-              >
+            {method === 'username' && (
+              <form noValidate onSubmit={formik.handleSubmit}>
                 <Stack spacing={3}>
                   <TextField
-                    error={!!(formik.touched.email && formik.errors.email)}
+                    error={formik.touched.username && Boolean(formik.errors.username)}
                     fullWidth
-                    helperText={formik.touched.email && formik.errors.email}
-                    label="Email Address"
-                    name="email"
+                    helperText={formik.touched.username && formik.errors.username}
+                    label="Username"
+                    name="username"
                     onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
-                    type="email"
-                    value={formik.values.email}
+                    type="text"
+                    value={formik.values.username}
                   />
                   <TextField
-                    error={!!(formik.touched.password && formik.errors.password)}
+                    error={formik.touched.password && Boolean(formik.errors.password)}
                     fullWidth
                     helperText={formik.touched.password && formik.errors.password}
                     label="Password"
@@ -158,58 +138,15 @@ const Page = () => {
                     value={formik.values.password}
                   />
                 </Stack>
-                <FormHelperText sx={{ mt: 1 }}>
-                  Optionally you can skip.
-                </FormHelperText>
                 {formik.errors.submit && (
-                  <Typography
-                    color="error"
-                    sx={{ mt: 3 }}
-                    variant="body2"
-                  >
+                  <Typography color="error" sx={{ mt: 3 }} variant="body2">
                     {formik.errors.submit}
                   </Typography>
                 )}
-                <Button
-                  fullWidth
-                  size="large"
-                  sx={{ mt: 3 }}
-                  type="submit"
-                  variant="contained"
-                >
+                <Button fullWidth size="large" sx={{ mt: 3 }} type="submit" variant="contained">
                   Continue
                 </Button>
-                <Button
-                  fullWidth
-                  size="large"
-                  sx={{ mt: 3 }}
-                  onClick={handleSkip}
-                >
-                  Skip authentication
-                </Button>
-                <Alert
-                  color="primary"
-                  severity="info"
-                  sx={{ mt: 3 }}
-                >
-                  <div>
-                    You can use <b>demo@devias.io</b> and password <b>Password123!</b>
-                  </div>
-                </Alert>
               </form>
-            )}
-            {method === 'phoneNumber' && (
-              <div>
-                <Typography
-                  sx={{ mb: 1 }}
-                  variant="h6"
-                >
-                  Not available in the demo
-                </Typography>
-                <Typography color="text.secondary">
-                  To prevent unnecessary costs we disabled this feature in the demo.
-                </Typography>
-              </div>
             )}
           </div>
         </Box>
@@ -218,10 +155,6 @@ const Page = () => {
   );
 };
 
-Page.getLayout = (page) => (
-  <AuthLayout>
-    {page}
-  </AuthLayout>
-);
+Page.getLayout = (page) => <AuthLayout>{page}</AuthLayout>;
 
 export default Page;

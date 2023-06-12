@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Home, HomeTag, InteriorDesign, InteriorDesignTag, Design, Customer, Service, Order, AggregatedData
+from .models import Profile, Home, HomeTag, InteriorDesign, InteriorDesignTag, Design, Customer, Service, Order, AggregatedData
 
 
 @admin.register(Customer)
@@ -32,7 +32,9 @@ class AggregatedDataAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
-
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    pass
 @admin.register(HomeTag)
 class HomeTagsAdmin(admin.ModelAdmin):
     pass

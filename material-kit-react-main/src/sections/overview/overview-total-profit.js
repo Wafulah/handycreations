@@ -10,7 +10,7 @@ export const OverviewTotalProfit = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:8000/backend/api/aggregated-data/');
+        const response = await fetch('https://handycreations.co.ke/backend/api/aggregated-data/');
         const data = await response.json();
         setValue((data[0].total_profit/1000).toFixed(2));
       } catch (error) {

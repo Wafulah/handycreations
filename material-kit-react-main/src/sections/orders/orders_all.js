@@ -26,7 +26,7 @@ export const AllOrders = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:8000/backend/api/orders/");
+        const response = await fetch("https://handycreations.co.ke/backend/api/orders/");
         const data = await response.json();
         setOrders(data);
       } catch (error) {

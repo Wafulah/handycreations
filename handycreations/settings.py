@@ -50,11 +50,15 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+
+
 ]
 
 ROOT_URLCONF = 'handycreations.urls'
+CSRF_COOKIE_HTTPONLY = False
 
 TEMPLATES = [
     {
@@ -73,9 +77,12 @@ TEMPLATES = [
 ]
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
-    'http://localhost:3000'  # Replace with the URL of your React frontend
+    'http://localhost:3000',
+    # Replace with the URL of your React frontend
     # Add more allowed origins if needed
 ]
+
+CSRF_COOKIE_NAME = 'csrftoken'
 WSGI_APPLICATION = 'handycreations.wsgi.application'
 
 

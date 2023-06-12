@@ -63,41 +63,35 @@ export const AuthProvider = (props) => {
   const { children } = props;
   const [state, dispatch] = useReducer(reducer, initialState);
   const initialized = useRef(false);
-
   const initialize = async () => {
     // Prevent from calling twice in development mode with React.StrictMode enabled
     if (initialized.current) {
       return;
     }
-
+  
     initialized.current = true;
-
-    let isAuthenticated = false;
-
+  
     try {
-      isAuthenticated = window.sessionStorage.getItem('authenticated') === 'true';
-    } catch (err) {
-      console.error(err);
-    }
-
-    if (isAuthenticated) {
-      const user = {
-        id: '5e86809283e28b96d2d38537',
-        avatar: '/assets/avatars/avatar-anika-visser.png',
-        name: 'Anika Visser',
-        email: 'anika.visser@devias.io'
-      };
-
-      dispatch({
-        type: HANDLERS.INITIALIZE,
-        payload: user
-      });
-    } else {
+      const response = await fetch('https://handycreations.co.ke/backend/admin/user/');
+      if (response.ok) {
+        const user = await response.json();
+        dispatch({
+          type: HANDLERS.INITIALIZE,
+          payload: user
+        });
+      } else {
+        dispatch({
+          type: HANDLERS.INITIALIZE
+        });
+      }
+    } catch (error) {
+      console.error(error);
       dispatch({
         type: HANDLERS.INITIALIZE
       });
     }
   };
+  
 
   useEffect(
     () => {
@@ -126,29 +120,30 @@ export const AuthProvider = (props) => {
       payload: user
     });
   };
-
-  const signIn = async (email, password) => {
-    if (email !== 'demo@devias.io' || password !== 'Password123!') {
-      throw new Error('Please check your email and password');
-    }
-
+  const signIn = async (credentials) => {
     try {
-      window.sessionStorage.setItem('authenticated', 'true');
-    } catch (err) {
-      console.error(err);
+      const response = await fetch('https://handycreations.co.ke/backend/api/login/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(credentials)
+      });
+  
+      if (response.ok) {
+        const user = await response.json();
+        window.sessionStorage.setItem('authenticated', 'true');
+        dispatch({
+          type: HANDLERS.SIGN_IN,
+          payload: user
+        });
+      } else {
+        throw new Error('Invalid credentials');
+      }
+    } catch (error) {
+      console.error(error);
+      throw new Error('Sign-in failed');
     }
-
-    const user = {
-      id: '5e86809283e28b96d2d38537',
-      avatar: '/assets/avatars/avatar-anika-visser.png',
-      name: 'Anika Visser',
-      email: 'anika.visser@devias.io'
-    };
-
-    dispatch({
-      type: HANDLERS.SIGN_IN,
-      payload: user
-    });
   };
 
   const signUp = async (email, name, password) => {
