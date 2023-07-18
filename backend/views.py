@@ -21,7 +21,7 @@ from .serializers import (
     AggregatedDataSerializer
 
 )
-
+from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from .models import Profile
@@ -215,7 +215,7 @@ class PaymentViewSet(viewsets.ModelViewSet):
 class StatusViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
-    print("hello")
+    
     @action(detail=False, methods=['post'])
     def delivery_status(self, request):
         delivery_status = request.data.get('status')
@@ -225,6 +225,49 @@ class StatusViewSet(viewsets.ModelViewSet):
         orders = Order.objects.filter(status=delivery_status)
         serializer = OrderSerializer(orders, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class OrderUpdateViewSet(viewsets.ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
+    @action(detail=False, methods=['post'])
+    def update_order(self, request):
+        order_number = request.data.get('order_number')
+        if not order_number:
+            return Response({"error": "Please provide an order number."}, status=400)
+
+        order = get_object_or_404(Order, order_number=order_number)
+        serializer = OrderSerializer(order)
+        return Response(serializer.data)
+
+
+class UpdateViewSet(viewsets.ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
+    @action(detail=False, methods=['post'])
+    def update_order(self, request):
+        order_number = request.data.get('order_number')
+        if not order_number:
+            return Response({"error": "Please provide an order number."}, status=400)
+
+        order = get_object_or_404(Order, order_number=order_number)
+
+        # Update the five fields based on the request data
+        
+        order.status = request.data.get('status', order.status)
+        order.payment_status = request.data.get('payment_status', order.payment_status)
+        order.amount_paid = int(float(request.data.get('amount_paid', order.amount_paid)))
+        order.cost = int(float(request.data.get('cost', order.cost)))
+        order.price = int(float(request.data.get('price', order.price)))
+
+        
+        order.save()
+
+        serializer = OrderSerializer(order)
+        return Response(serializer.data)
+
 
 class AggregatedDataViewSet(viewsets.ModelViewSet):
     queryset = AggregatedData.objects.all()

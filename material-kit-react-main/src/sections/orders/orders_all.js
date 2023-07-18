@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { format } from "date-fns";
 import PropTypes from "prop-types";
+import Link from "next/link";
+import Image from "next/image";
 import {
   Box,
   Button,
@@ -43,7 +45,7 @@ export const AllOrders = (props) => {
   const snapshot = useSnapshot(store);
 
   const fetchData = () => {
-    fetch("https://handycreations.co.ke/api/orders/")
+    fetch("http://localhost:8000/backend/api/orders/")
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -82,6 +84,7 @@ export const AllOrders = (props) => {
           <Table>
             <TableHead>
               <TableRow>
+                <TableCell>Edit</TableCell>
                 <TableCell>Order</TableCell>
                 <TableCell>Customer</TableCell>
                 <TableCell>Date</TableCell>
@@ -101,6 +104,19 @@ export const AllOrders = (props) => {
 
                   return (
                     <TableRow hover key={order.order_number}>
+                      <TableCell sx={{
+                            
+                            backgroundColor: "#4ddbff", // Light blue background color
+                           
+                          }}>
+                        <Link
+                          href={`/order-update/${order.order_number}`}
+                          
+                        >   
+                          <Image src="/pencile.svg" width={20} height={20} alt="edit"  />
+                          
+                        </Link>
+                      </TableCell>
                       <TableCell>{order.order_number}</TableCell>
                       <TableCell>{order.customer}</TableCell>
                       <TableCell>{createdAt}</TableCell>
