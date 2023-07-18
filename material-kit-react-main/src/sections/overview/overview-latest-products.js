@@ -23,18 +23,26 @@ export const OverviewLatestProducts = (props) => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch('https://handycreations.co.ke/backend/api/latest-products/');
-        const data = await response.json();
-        setProducts(data);
-      } catch (error) {
-        console.error('Error fetching latest products:', error);
-      }
+    const fetchProducts = () => {
+      fetch('https://handycreations.co.ke/api/latest-products/')
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error('Response not OK');
+          }
+        })
+        .then((data) => {
+          setProducts(data);
+        })
+        .catch((error) => {
+          console.error('Error fetching latest products:', error);
+        });
     };
-
+  
     fetchProducts();
   }, []);
+  
 
   return (
     <Card sx={sx}>

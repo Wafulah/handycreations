@@ -21,21 +21,26 @@ export const OverviewTraffic = (props) => {
   const theme = useTheme();
 
   useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const response = await fetch("https://handycreations.co.ke/backend/api/services/");
-        const data = await response.json();
-        // const series = data.map((service) => service.percentage);
-        
-        setChartSeries(data);
-      } catch (error) {
-        console.error("Error fetching services:", error);
-      }
+    const fetchServices = () => {
+      fetch("https://handycreations.co.ke/api/services/")
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error('Response not OK');
+          }
+        })
+        .then((data) => {
+          setChartSeries(data);
+        })
+        .catch((error) => {
+          console.error("Error fetching services:", error);
+        });
     };
-
+  
     fetchServices();
-    
   }, []);
+  
 
   return (
     <Card sx={sx}>

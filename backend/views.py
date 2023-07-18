@@ -1,11 +1,13 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.viewsets import ViewSet
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import authenticate
 from django.views.decorators.csrf import csrf_protect
+from django.utils import timezone
 from .models import HomeTag, Home, InteriorDesignTag, InteriorDesign, Design,  Customer, Service, Order, AggregatedData
 from .serializers import (
     HomeTagSerializer,
@@ -23,6 +25,24 @@ from .serializers import (
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from .models import Profile
+
+from django.shortcuts import render
+
+
+def index(request):
+    return render(request, 'index.html')
+
+
+def design(request):
+    return render(request, 'index.html')
+
+
+def web_design(request):
+    return render(request, 'index.html')
+
+
+def interior_design(request):
+    return render(request, 'index.html')
 
 
 def admin_user_view(request):
@@ -51,11 +71,9 @@ class AdminLoginViewSet(ViewSet):
     def create(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
-        print(username, password)
 
         # Authenticate the user
         user = authenticate(request, username=username, password=password)
-        print(user)
 
         if user is not None:
             # Authentication succeeded
@@ -141,7 +159,7 @@ class InteriorDesignTagViewSet(viewsets.ModelViewSet):
 
 
 class InteriorDesignViewSet(viewsets.ModelViewSet):
-    queryset = InteriorDesign.objects.all()
+    queryset = InteriorDesign.objects.order_by('-date')
     serializer_class = InteriorDesignSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
@@ -165,7 +183,48 @@ class ServiceViewSet(viewsets.ModelViewSet):
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+class SearchViewSet(viewsets.ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
 
+    @action(detail=False, methods=['post'])
+    def search_by_order_number(self, request):
+        order_number = request.data.get('order_number')
+        if not order_number:
+            return Response({"error": "Please provide an order number."}, status=400)
+
+        orders = Order.objects.filter(order_number__icontains=order_number)
+        serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data)
+
+class PaymentViewSet(viewsets.ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
+    @action(detail=False, methods=['post'])
+    def payment_orders(self, request):
+        payment_status = request.data.get('payment_status')
+        if not payment_status:
+            return Response({"error": "Please provide a payment status."}, status=status.HTTP_400_BAD_REQUEST)
+
+        orders = Order.objects.filter(payment_status=payment_status)
+        serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+#view to filter functions
+class StatusViewSet(viewsets.ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    print("hello")
+    @action(detail=False, methods=['post'])
+    def delivery_status(self, request):
+        delivery_status = request.data.get('status')
+        if not delivery_status:
+            return Response({"error": "Please provide a delivery status."}, status=status.HTTP_400_BAD_REQUEST)
+
+        orders = Order.objects.filter(status=delivery_status)
+        serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class AggregatedDataViewSet(viewsets.ModelViewSet):
     queryset = AggregatedData.objects.all()

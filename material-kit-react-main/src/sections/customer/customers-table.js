@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { format } from 'date-fns';
+import { useState, useEffect } from "react";
+import PropTypes from "prop-types";
+import { format } from "date-fns";
 import {
   Avatar,
   Box,
@@ -13,10 +13,10 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  Typography
-} from '@mui/material';
-import { Scrollbar } from 'src/components/scrollbar';
-import { getInitials } from 'src/utils/get-initials';
+  Typography,
+} from "@mui/material";
+import { Scrollbar } from "src/components/scrollbar";
+import { getInitials } from "src/utils/get-initials";
 
 export const CustomersTable = (props) => {
   const {
@@ -28,22 +28,29 @@ export const CustomersTable = (props) => {
     onSelectOne,
     page = 0,
     rowsPerPage = 0,
-    selected = []
+    selected = [],
   } = props;
 
   const [customers, setCustomers] = useState([]);
   const [totalCustomers, setTotalCustomers] = useState(0);
 
   useEffect(() => {
-    const fetchCustomers = async () => {
-      try {
-        const response = await fetch('https://handycreations.co.ke/backend/api/customers/');
-        const data = await response.json();
-        setCustomers(data);
-        setTotalCustomers(data.length);
-      } catch (error) {
-        console.log('Error:', error);
-      }
+    const fetchCustomers = () => {
+      fetch("https://handycreations.co.ke/api/customers/")
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error("Response not OK");
+          }
+        })
+        .then((data) => {
+          setCustomers(data);
+          setTotalCustomers(data.length);
+        })
+        .catch((error) => {
+          console.log("Error:", error);
+        });
     };
 
     fetchCustomers();
@@ -72,21 +79,11 @@ export const CustomersTable = (props) => {
                     }}
                   />
                 </TableCell>
-                <TableCell>
-                  Name
-                </TableCell>
-                <TableCell>
-                  Email
-                </TableCell>
-                <TableCell>
-                  Location
-                </TableCell>
-                <TableCell>
-                  Phone
-                </TableCell>
-                <TableCell>
-                  Signed Up
-                </TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Location</TableCell>
+                <TableCell>Phone</TableCell>
+                <TableCell>Signed Up</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -94,14 +91,10 @@ export const CustomersTable = (props) => {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((customer) => {
                   const isSelected = selected.includes(customer.id);
-                  const createdAt = format(new Date(customer.signed_up), 'dd/MM/yyyy');
+                  const createdAt = format(new Date(customer.signed_up), "dd/MM/yyyy");
 
                   return (
-                    <TableRow
-                      hover
-                      key={customer.id}
-                      selected={isSelected}
-                    >
+                    <TableRow hover key={customer.id} selected={isSelected}>
                       <TableCell padding="checkbox">
                         <Checkbox
                           checked={isSelected}
@@ -115,31 +108,15 @@ export const CustomersTable = (props) => {
                         />
                       </TableCell>
                       <TableCell>
-                        <Stack
-                          alignItems="center"
-                          direction="row"
-                          spacing={2}
-                        >
-                          <Avatar src={customer.avatar}>
-                            {getInitials(customer.name)}
-                          </Avatar>
-                          <Typography variant="subtitle2">
-                            {customer.name}
-                          </Typography>
+                        <Stack alignItems="center" direction="row" spacing={2}>
+                          <Avatar src={customer.avatar}>{getInitials(customer.name)}</Avatar>
+                          <Typography variant="subtitle2">{customer.name}</Typography>
                         </Stack>
                       </TableCell>
-                      <TableCell>
-                        {customer.email}
-                      </TableCell>
-                      <TableCell>
-                        {customer.location}
-                      </TableCell>
-                      <TableCell>
-                        {customer.phone}
-                      </TableCell>
-                      <TableCell>
-                        {createdAt}
-                      </TableCell>
+                      <TableCell>{customer.email}</TableCell>
+                      <TableCell>{customer.location}</TableCell>
+                      <TableCell>{customer.phone}</TableCell>
+                      <TableCell>{createdAt}</TableCell>
                     </TableRow>
                   );
                 })}
@@ -169,5 +146,5 @@ CustomersTable.propTypes = {
   onSelectOne: PropTypes.func,
   page: PropTypes.number,
   rowsPerPage: PropTypes.number,
-  selected: PropTypes.array
+  selected: PropTypes.array,
 };

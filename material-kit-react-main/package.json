@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "NODE_ENV=production node server.js",
+    "start": "next start",
     "export": "next export",
     "lint": "next lint",
     "lint-fix": "next lint --fix"
@@ -34,6 +34,7 @@
     "react-apexcharts": "1.4.0",
     "react-dom": "18.2.0",
     "simplebar-react": "^3.2.1",
+    "valtio": "^1.10.7",
     "yup": "1.0.0"
   },
   "devDependencies": {

@@ -28,12 +28,6 @@ const paymentChoices = [
 
 export const Order = () => {
   const [values, setValues] = useState({
-    firstName: "Handy",
-    lastName: "Creations",
-    email: "handycreations@gmail.com",
-    phone: "",
-    state: "Nairobi",
-    country: "Kenya",
     order_number: 0,
     customer: 0,
     service: 0,
@@ -54,34 +48,27 @@ export const Order = () => {
     }));
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
 
-    try {
-      const response = await axios.post(
-        "https://handycreations.co.ke/backend/api/orders/",
-        values
-      );
-      console.log("Order created successfully:", response.data);
+    axios
+      .post("https://handycreations.co.ke/api/orders/", values)
+      .then((response) => {
+        console.log("Order created successfully:", response.data);
 
-      // Reset form fields
-      resetForm();
+        // Reset form fields
+        resetForm();
 
-      // Show success message
-      setIsSubmitted(true);
-    } catch (error) {
-      console.error("Error creating order:", error);
-    }
+        // Show success message
+        setIsSubmitted(true);
+      })
+      .catch((error) => {
+        console.error("Error creating order:", error);
+      });
   };
 
   const resetForm = () => {
     setValues({
-      firstName: "Handy",
-      lastName: "Creations",
-      email: "handycreations@gmail.com",
-      phone: "",
-      state: "Nairobi",
-      country: "Kenya",
       order_number: 0,
       customer: 0,
       service: 0,
@@ -98,10 +85,7 @@ export const Order = () => {
   return (
     <form autoComplete="off" noValidate onSubmit={handleSubmit}>
       <Card>
-        <CardHeader
-          subheader="The information can be edited"
-          title="Order Details"
-        />
+        <CardHeader subheader="The information can be edited" title="Order Details" />
         <CardContent sx={{ pt: 0 }}>
           <Box sx={{ m: -1.5 }}>
             <Grid container spacing={3}>

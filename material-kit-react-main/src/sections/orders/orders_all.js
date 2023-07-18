@@ -1,9 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { format } from "date-fns";
 import PropTypes from "prop-types";
-import { Box, Button, Card, CardActions, CardHeader, Divider, SvgIcon, Table, TableBody, TableCell, TableHead, TableRow, Typography, TablePagination } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardHeader,
+  Divider,
+  SvgIcon,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Typography,
+  TablePagination,
+} from "@mui/material";
 import { Scrollbar } from "src/components/scrollbar";
 import { SeverityPill } from "src/components/severity-pill";
+import { useSnapshot } from "valtio";
+import { store } from "./store";
 
 const statusMap = {
   DELIVERED: "success",
@@ -19,21 +36,30 @@ const paymentStatusMap = {
 
 export const AllOrders = (props) => {
   const { sx } = props;
-  const [orders, setOrders] = useState([]);
+  // const [orders, setOrders] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("https://handycreations.co.ke/backend/api/orders/");
-        const data = await response.json();
-        setOrders(data);
-      } catch (error) {
-        console.log("Error:", error);
-      }
-    };
+  const snapshot = useSnapshot(store);
 
+  const fetchData = () => {
+    fetch("https://handycreations.co.ke/api/orders/")
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Response not OK");
+        }
+      })
+      .then((data) => {
+        // Update the orders in the store using setOrders function
+        store.setOrders(data);
+      })
+      .catch((error) => {
+        console.log("Error:", error);
+      });
+  };
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -48,7 +74,9 @@ export const AllOrders = (props) => {
 
   return (
     <Card sx={sx}>
-      <CardHeader title="All Orders" />
+      <Button color="inherit" onClick={fetchData}>
+        <CardHeader title="All Orders" />
+      </Button>
       <Scrollbar sx={{ flexGrow: 1 }}>
         <Box sx={{ minWidth: 800 }}>
           <Table>
@@ -66,7 +94,7 @@ export const AllOrders = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {orders
+              {snapshot.orders
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((order) => {
                   const createdAt = format(new Date(order.date), "dd/MM/yyyy");
@@ -77,9 +105,7 @@ export const AllOrders = (props) => {
                       <TableCell>{order.customer}</TableCell>
                       <TableCell>{createdAt}</TableCell>
                       <TableCell>
-                        <SeverityPill color={statusMap[order.status]}>
-                          {order.status}
-                        </SeverityPill>
+                        <SeverityPill color={statusMap[order.status]}>{order.status}</SeverityPill>
                       </TableCell>
                       <TableCell>
                         <SeverityPill color={paymentStatusMap[order.payment_status]}>
@@ -101,7 +127,7 @@ export const AllOrders = (props) => {
       <CardActions sx={{ justifyContent: "flex-end" }}>
         <TablePagination
           component="div"
-          count={orders.length}
+          count={snapshot.orders.length}
           onPageChange={handlePageChange}
           onRowsPerPageChange={handleRowsPerPageChange}
           page={page}

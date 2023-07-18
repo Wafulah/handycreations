@@ -10,19 +10,26 @@ export const OverviewTotalCustomers = (props) => {
   const [value, setValue] = useState('');
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('https://handycreations.co.ke/backend/api/aggregated-data/');
-        const data = await response.json();
-        setValue(data[0]?.total_customers || '');
-      } catch (error) {
-        console.log('Error:', error);
-      }
+    const fetchData = () => {
+      fetch('https://handycreations.co.ke/api/aggregated-data/')
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error('Response not OK');
+          }
+        })
+        .then((data) => {
+          setValue(data[0]?.total_customers || '');
+        })
+        .catch((error) => {
+          console.log('Error:', error);
+        });
     };
-
+  
     fetchData();
-
   }, []);
+  
 
   return (
     <Card sx={sx}>

@@ -30,8 +30,15 @@ router.register('login', views.AdminLoginViewSet, basename='admin_login')
 urlpatterns = [
     # Your app's URL patterns here
     # ...
+    path('', views.index, name='index'),
+    path('design', views.design, name='design'),
+    path('interior_design', views.interior_design, name='interior_design'),
+    path('web_design', views.web_design, name='web_design'),
     path('admin/user/', views.admin_user_view, name='admin_user_view'),
-
+    path('api/search-orders', views.SearchViewSet.as_view({'post': 'search_by_order_number'}), name='search_by_order_number'),
+    path('api/payment-orders/', views.PaymentViewSet.as_view({'post': 'payment_orders'}), name='payment_orders'),
+    path('api/delivery_status/', views.StatusViewSet.as_view({'post': 'delivery_status'}), name='delivery_status'),
+    
     # path('api/check_authentication/', views.AuthenticationViewSet.as_view({'get': 'check_authentication'}), name='check_authentication'),
     # path('api/logout/', views.LogoutViewSet.as_view({'post': 'logout'}), name='logout'),
 

@@ -49,7 +49,7 @@ export const AddCustomer = () => {
     event.preventDefault();
 
     try {
-      const response = await axios.post("https://handycreations.co.ke/backend/api/customers/", values);
+      const response = await axios.post("https://handycreations.co.ke/api/customers/", values);
       // console.log("Customer created successfully:", response.data);
 
       // Reset form fields

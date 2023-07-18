@@ -38,18 +38,26 @@ export const OverviewLatestOrders = (props) => {
   const router = useRouter();
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('https://handycreations.co.ke/backend/api/orders/');
-        const data = await response.json();
-        setOrders(data.slice(0, 12)); // Limit the orders to twelve
-      } catch (error) {
-        console.log('Error:', error);
-      }
+    const fetchData = () => {
+      fetch('https://handycreations.co.ke/api/orders/')
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error('Response not OK');
+          }
+        })
+        .then((data) => {
+          setOrders(data.slice(0, 12)); // Limit the orders to twelve
+        })
+        .catch((error) => {
+          console.log('Error:', error);
+        });
     };
-
+  
     fetchData();
   }, []);
+  
 
   const handleViewAll = () => {
     router.push('/all_orders');

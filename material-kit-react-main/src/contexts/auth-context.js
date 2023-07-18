@@ -72,7 +72,7 @@ export const AuthProvider = (props) => {
     initialized.current = true;
   
     try {
-      const response = await fetch('https://handycreations.co.ke/backend/admin/user/');
+      const response = await fetch('http://localhost:8000/backend/admin/user/');
       if (response.ok) {
         const user = await response.json();
         dispatch({
@@ -111,7 +111,7 @@ export const AuthProvider = (props) => {
     const user = {
       id: '5e86809283e28b96d2d38537',
       avatar: '/assets/avatars/avatar-anika-visser.png',
-      name: 'Anika Visser',
+      name: 'Handy Creations',
       email: 'anika.visser@devias.io'
     };
 
@@ -122,7 +122,7 @@ export const AuthProvider = (props) => {
   };
   const signIn = async (credentials) => {
     try {
-      const response = await fetch('https://handycreations.co.ke/backend/api/login/', {
+      const response = await fetch('https://handycreations.co.ke/api/login/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

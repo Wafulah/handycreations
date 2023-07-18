@@ -37,32 +37,37 @@ const Page = () => {
         .max(255)
         .required('Password is required')
     }),
-    onSubmit: async (values, helpers) => {
-      try {
-        const csrftoken = getCookie('csrftoken'); // Retrieve the CSRF token from cookies
-        const response = await fetch('https://handycreations.co.ke/backend/api/login/', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrftoken // Include the CSRF token in the request headers
-          },
-          body: JSON.stringify(values)
-        });
-
-        if (response.ok) {
-          const user = await response.json();
+    onSubmit: (values, helpers) => {
+      const csrftoken = getCookie('csrftoken'); // Retrieve the CSRF token from cookies
+    
+      fetch('https://handycreations.co.ke/api/login/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrftoken // Include the CSRF token in the request headers
+        },
+        body: JSON.stringify(values)
+      })
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            return response.text().then((errorData) => {
+              throw new Error(errorData);
+            });
+          }
+        })
+        .then((user) => {
           auth.signIn(user);
           router.push('/');
-        } else {
-          const errorData = await response.text();
-          throw new Error(errorData);
-        }
-      } catch (err) {
-        helpers.setStatus({ success: false });
-        helpers.setErrors({ submit: err.message });
-        helpers.setSubmitting(false);
-      }
+        })
+        .catch((err) => {
+          helpers.setStatus({ success: false });
+          helpers.setErrors({ submit: err.message });
+          helpers.setSubmitting(false);
+        });
     }
+    
   });
 
   // Function to retrieve the CSRF token from cookies

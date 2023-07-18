@@ -11,6 +11,8 @@ import { Layout as DashboardLayout } from "src/layouts/dashboard/layout";
 import { AllOrders } from "src/sections/orders/orders_all";
 import { OrdersSearch } from "src/sections/orders/order_search";
 import { applyPagination } from "src/utils/apply-pagination";
+import { Payment } from "src/sections/orders/payment";
+import { Delivery } from "src/sections/orders/delivery";
 
 const now = new Date();
 
@@ -63,12 +65,10 @@ const Page = () => {
               <Stack spacing={1}>
                 <Typography variant="h4">Orders</Typography>
                 <Stack alignItems="center" direction="row" spacing={1}>
-                  <Button color="inherit" startIcon={<ArrowUpOnSquareIcon />}>
-                    Import
-                  </Button>
-                  <Button color="inherit" startIcon={<ArrowDownOnSquareIcon />}>
-                    Export
-                  </Button>
+                 
+                  < Payment />
+                  < Delivery /> 
+                
                 </Stack>
               </Stack>
               <div>
