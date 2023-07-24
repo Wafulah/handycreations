@@ -22,7 +22,7 @@ const Page = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('https://handycreations.co.ke/api/products/');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/products/`);
         const data = await response.json();
         setProducts(data);
       } catch (error) {

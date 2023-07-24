@@ -45,7 +45,7 @@ export const AllOrders = (props) => {
   const snapshot = useSnapshot(store);
 
   const fetchData = () => {
-    fetch("http://localhost:8000/backend/api/orders/")
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/orders/`)
       .then((response) => {
         if (response.ok) {
           return response.json();

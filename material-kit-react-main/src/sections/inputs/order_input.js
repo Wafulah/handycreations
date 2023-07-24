@@ -34,10 +34,10 @@ export const Order = () => {
     date: "",
     status: "",
     payment_status: "",
-    amount_paid: "",
-    cost: "",
-    price: "",
-    profit: "",
+    amount_paid: 0,
+    cost: 0,
+    price: 0,
+    profit: 0,
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -50,12 +50,11 @@ export const Order = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
+    console.log(values);
     axios
-      .post("https://handycreations.co.ke/api/orders/", values)
+      .post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/orders/`, values)
       .then((response) => {
         console.log("Order created successfully:", response.data);
-
         // Reset form fields
         resetForm();
 
@@ -75,10 +74,10 @@ export const Order = () => {
       date: "",
       status: "",
       payment_status: "",
-      amount_paid: "",
-      cost: "",
-      price: "",
-      profit: "",
+      amount_paid: 0,
+      cost: 0,
+      price: 0,
+      profit: 0,
     });
   };
 

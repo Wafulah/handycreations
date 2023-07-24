@@ -24,7 +24,7 @@ export const OverviewLatestProducts = (props) => {
 
   useEffect(() => {
     const fetchProducts = () => {
-      fetch('https://handycreations.co.ke/api/latest-products/')
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/latest-products/`)
         .then((response) => {
           if (response.ok) {
             return response.json();

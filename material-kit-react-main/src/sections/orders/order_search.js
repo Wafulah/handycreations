@@ -8,7 +8,7 @@ export const OrdersSearch = () => {
   const [searchValue, setSearchValue] = useState('');
 
   const handleSearch = () => {
-    fetch('http://localhost:8000/backend/api/search-orders', {
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/search-orders`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -181,10 +181,10 @@ class ServiceViewSet(viewsets.ModelViewSet):
 
 
 class OrderViewSet(viewsets.ModelViewSet):
-    queryset = Order.objects.all()
+    queryset = Order.objects.all().order_by('-date')
     serializer_class = OrderSerializer
 class SearchViewSet(viewsets.ModelViewSet):
-    queryset = Order.objects.all()
+    queryset = Order.objects.all().order_by('-date')
     serializer_class = OrderSerializer
 
     @action(detail=False, methods=['post'])
@@ -193,12 +193,12 @@ class SearchViewSet(viewsets.ModelViewSet):
         if not order_number:
             return Response({"error": "Please provide an order number."}, status=400)
 
-        orders = Order.objects.filter(order_number__icontains=order_number)
+        orders = Order.objects.filter(order_number__icontains=order_number).order_by('-date')
         serializer = OrderSerializer(orders, many=True)
         return Response(serializer.data)
 
 class PaymentViewSet(viewsets.ModelViewSet):
-    queryset = Order.objects.all()
+    queryset = Order.objects.all().order_by('-date')
     serializer_class = OrderSerializer
 
     @action(detail=False, methods=['post'])
@@ -207,7 +207,7 @@ class PaymentViewSet(viewsets.ModelViewSet):
         if not payment_status:
             return Response({"error": "Please provide a payment status."}, status=status.HTTP_400_BAD_REQUEST)
 
-        orders = Order.objects.filter(payment_status=payment_status)
+        orders = Order.objects.filter(payment_status=payment_status).order_by('-date')
         serializer = OrderSerializer(orders, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -222,13 +222,13 @@ class StatusViewSet(viewsets.ModelViewSet):
         if not delivery_status:
             return Response({"error": "Please provide a delivery status."}, status=status.HTTP_400_BAD_REQUEST)
 
-        orders = Order.objects.filter(status=delivery_status)
+        orders = Order.objects.filter(status=delivery_status).order_by('-date')
         serializer = OrderSerializer(orders, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class OrderUpdateViewSet(viewsets.ModelViewSet):
-    queryset = Order.objects.all()
+    queryset = Order.objects.all().order_by('-date')
     serializer_class = OrderSerializer
 
     @action(detail=False, methods=['post'])
@@ -237,13 +237,13 @@ class OrderUpdateViewSet(viewsets.ModelViewSet):
         if not order_number:
             return Response({"error": "Please provide an order number."}, status=400)
 
-        order = get_object_or_404(Order, order_number=order_number)
+        order = get_object_or_404(Order, order_number=order_number).order_by('-date')
         serializer = OrderSerializer(order)
         return Response(serializer.data)
 
 
 class UpdateViewSet(viewsets.ModelViewSet):
-    queryset = Order.objects.all()
+    queryset = Order.objects.all().order_by('-date')
     serializer_class = OrderSerializer
 
     @action(detail=False, methods=['post'])
@@ -252,7 +252,7 @@ class UpdateViewSet(viewsets.ModelViewSet):
         if not order_number:
             return Response({"error": "Please provide an order number."}, status=400)
 
-        order = get_object_or_404(Order, order_number=order_number)
+        order = get_object_or_404(Order, order_number=order_number).order_by('-date')
 
         # Update the five fields based on the request data
         

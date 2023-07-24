@@ -16,7 +16,7 @@ export const Delivery = () => {
   const handleDeliveryOptionClick = (delivery) => {
     setAnchorEl(null);
     // Send the post request to fetch orders with the selected delivery
-    fetch("http://localhost:8000/backend/api/delivery_status/", {
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/delivery_status/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

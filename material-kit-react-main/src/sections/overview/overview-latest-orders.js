@@ -39,7 +39,7 @@ export const OverviewLatestOrders = (props) => {
 
   useEffect(() => {
     const fetchData = () => {
-      fetch('https://handycreations.co.ke/api/orders/')
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/orders/`)
         .then((response) => {
           if (response.ok) {
             return response.json();

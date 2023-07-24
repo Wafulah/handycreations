@@ -22,7 +22,7 @@ export const Payment = () => {
   const handlePaymentOptionClick = (payment) => {
     setAnchorEl(null);
     // Send the post request to fetch orders with the selected payment
-    fetch('http://localhost:8000/backend/api/payment-orders/', {
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/payment-orders/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

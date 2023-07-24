@@ -22,7 +22,7 @@ export const OverviewTraffic = (props) => {
 
   useEffect(() => {
     const fetchServices = () => {
-      fetch("https://handycreations.co.ke/api/services/")
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/services/`)
         .then((response) => {
           if (response.ok) {
             return response.json();

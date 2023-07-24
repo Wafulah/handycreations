@@ -44,7 +44,7 @@ export const Order = ({ orderNumber }) => {
   // Function to send the POST request when the orderNumber prop changes
   useEffect(() => {
     if (orderNumber) {
-      fetch(`http://localhost:8000/backend/api/update_order/`, {
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/update_order/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -82,7 +82,7 @@ export const Order = ({ orderNumber }) => {
     event.preventDefault();
 
     axios
-      .post("http://localhost:8000/backend/api/update/", values)
+      .post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/update/`, values)
       .then((response) => {
         console.log("Order created successfully:", response.data);
 

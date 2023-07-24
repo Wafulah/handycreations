@@ -11,7 +11,7 @@ export const OverviewTotalCustomers = (props) => {
 
   useEffect(() => {
     const fetchData = () => {
-      fetch('https://handycreations.co.ke/api/aggregated-data/')
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/aggregated-data/`)
         .then((response) => {
           if (response.ok) {
             return response.json();
