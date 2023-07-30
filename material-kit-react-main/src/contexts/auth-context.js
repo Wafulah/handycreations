@@ -63,33 +63,34 @@ export const AuthProvider = (props) => {
   const { children } = props;
   const [state, dispatch] = useReducer(reducer, initialState);
   const initialized = useRef(false);
-  const initialize = async () => {
+  const initialize = () => {
     // Prevent from calling twice in development mode with React.StrictMode enabled
     if (initialized.current) {
-      return;
+      return Promise.resolve();
     }
   
     initialized.current = true;
   
-    try {
-      const response = await fetch('http://localhost:8000/backend/admin/user/');
-      if (response.ok) {
-        const user = await response.json();
+    return fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/admin/user/`)
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          return Promise.reject(new Error('Failed to fetch user data'));
+        }
+      })
+      .then((user) => {
         dispatch({
           type: HANDLERS.INITIALIZE,
           payload: user
         });
-      } else {
+      })
+      .catch((error) => {
+        console.error(error);
         dispatch({
           type: HANDLERS.INITIALIZE
         });
-      }
-    } catch (error) {
-      console.error(error);
-      dispatch({
-        type: HANDLERS.INITIALIZE
       });
-    }
   };
   
 
@@ -109,43 +110,65 @@ export const AuthProvider = (props) => {
     }
 
     const user = {
-      id: '5e86809283e28b96d2d38537',
-      avatar: '/assets/avatars/avatar-anika-visser.png',
-      name: 'Handy Creations',
-      email: 'anika.visser@devias.io'
+      "id": 1,
+      "avatar": "/backend/media/avatars/ID6_6FiClg1.jpg",
+      "name": "Handy",
+      "email": "handycreations@gmail.com",
+      "isAdmin": true
     };
+    
 
     dispatch({
       type: HANDLERS.SIGN_IN,
       payload: user
     });
   };
-  const signIn = async (credentials) => {
-    try {
-      const response = await fetch('https://handycreations.co.ke/api/login/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(credentials)
-      });
-  
-      if (response.ok) {
-        const user = await response.json();
-        window.sessionStorage.setItem('authenticated', 'true');
+  const signIn = (credentials) => {
+    
+    
+    window.sessionStorage.setItem('authenticated', 'true');
         dispatch({
           type: HANDLERS.SIGN_IN,
-          payload: user
+          payload: credentials
         });
-      } else {
-        throw new Error('Invalid credentials');
-      }
-    } catch (error) {
-      console.error(error);
-      throw new Error('Sign-in failed');
-    }
+    // Function to retrieve the CSRF token from cookies
+    // function getCookie(name) {
+    //   const value = `; ${document.cookie}`;
+    //   const parts = value.split(`; ${name}=`);
+    //   if (parts.length === 2) return parts.pop().split(';').shift();
+    // }
+  
+    // const csrftoken = getCookie('csrftoken'); // Retrieve the CSRF token from cookies
+    
+    // return fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/login/`,{
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     'X-CSRFToken': csrftoken // Include the CSRF token in the request headers
+    //   },
+    //   body: JSON.stringify(credentials)
+    // })
+    //   .then((response) => {
+        
+    //     if (response.ok) {
+    //       return response.json();
+    //     } else {
+    //       return Promise.reject(new Error('Invalid credentials'));
+    //     }
+    //   })
+    //   .then((user) => {
+    //     window.sessionStorage.setItem('authenticated', 'true');
+    //     dispatch({
+    //       type: HANDLERS.SIGN_IN,
+    //       payload: user
+    //     });
+    //   })
+    //   .catch((error) => {
+    //     console.error(error);
+    //     throw new Error('Sign-in failed');
+    //   });
   };
-
+  
   const signUp = async (email, name, password) => {
     throw new Error('Sign up is not implemented');
   };
