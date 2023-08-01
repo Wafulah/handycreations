@@ -41,6 +41,9 @@ def web_design(request):
     return render(request, 'index.html')
 
 
+def frames(request):
+    return render(request, 'index.html')
+
 def interior_design(request):
     return render(request, 'index.html')
 
@@ -143,31 +146,86 @@ class AdminLoginViewSet(ViewSet):
 class HomeTagViewSet(viewsets.ModelViewSet):
     queryset = HomeTag.objects.all()
     serializer_class = HomeTagSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    
+    
+ 
+
+    
 
 
 class HomeViewSet(viewsets.ModelViewSet):
-    queryset = Home.objects.all()
+    queryset = Home.objects.all().order_by('-date')
     serializer_class = HomeSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
 
+    def create(self, request, *args, **kwargs):
+      print(request.data)
+      # Extract data from the request
+      name = request.data['name']
+      date = request.data['date']
+      featured = bool(request.data['featured'])  # Convert the string to a boolean
+      tag_ids = request.data.getlist('tag')
+  
+      # Create the Home object using objects.create()
+      home = Home.objects.create(name=name, date=date, featured=featured)
+  
+      # Retrieve the HomeTag objects based on the tag IDs and add them to the many-to-many field
+      tags = HomeTag.objects.filter(id__in=tag_ids)
+      home.tag.add(*tags)
+  
+      # Save the home object
+      home.save()
+  
+      # You can also access the uploaded image using request.FILES and save it to the pic field of Home object
+      pic = request.FILES['pic']
+      home.pic = pic
+      home.save()
+
+      # Return any response you need
+      return Response({'message': 'Home object created successfully'})
 
 class InteriorDesignTagViewSet(viewsets.ModelViewSet):
     queryset = InteriorDesignTag.objects.all()
     serializer_class = InteriorDesignTagSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    
 
 
 class InteriorDesignViewSet(viewsets.ModelViewSet):
     queryset = InteriorDesign.objects.order_by('-date')
     serializer_class = InteriorDesignSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    
+    def create(self, request, *args, **kwargs):
+      print(request.data)
+      # Extract data from the request
+      name = request.data['name']
+      date = request.data['date']
+      featured = bool(request.data['featured'])  # Convert the string to a boolean
+      tag_ids = request.data.getlist('tag')
+  
+      # Create the Home object using objects.create()
+      interior = InteriorDesign.objects.create(name=name, date=date, featured=featured)
+  
+      # Retrieve the HomeTag objects based on the tag IDs and add them to the many-to-many field
+      tags = InteriorDesignTag.objects.filter(id__in=tag_ids)
+      interior.tag.add(*tags)
+  
+      # Save the home object
+      interior.save()
+  
+      # You can also access the uploaded image using request.FILES and save it to the pic field of Home object
+      pic = request.FILES['pic']
+      interior.pic = pic
+      interior.save()
+
+      # Return any response you need
+      return Response({'message': 'interior object created successfully'})
+    
 
 
 class DesignViewSet(viewsets.ModelViewSet):
-    queryset = Design.objects.all()
+    queryset = Design.objects.all().order_by('-date')
     serializer_class = DesignSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    
 
 
 class CustomerViewSet(viewsets.ModelViewSet):

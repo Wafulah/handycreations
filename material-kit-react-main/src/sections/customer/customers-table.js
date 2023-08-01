@@ -36,7 +36,7 @@ export const CustomersTable = (props) => {
 
   useEffect(() => {
     const fetchCustomers = () => {
-      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}api/customers/`)
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/customers/`)
         .then((response) => {
           if (response.ok) {
             return response.json();

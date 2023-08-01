@@ -18,7 +18,7 @@ export const Payment = () => {
   const handlePaymentButtonClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
+//
   const handlePaymentOptionClick = (payment) => {
     setAnchorEl(null);
     // Send the post request to fetch orders with the selected payment

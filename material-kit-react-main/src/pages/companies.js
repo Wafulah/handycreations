@@ -15,9 +15,11 @@ import {
 } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { CompanyCard } from 'src/sections/companies/company-card';
+import { useRouter } from 'next/router';
 
 const Page = () => {
   const [products, setProducts] = useState([]);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -32,6 +34,10 @@ const Page = () => {
 
     fetchProducts();
   }, []);
+
+  const handleAddProduct = () => {
+    router.push("/product_add");
+  };
 
   return (
     <>
@@ -54,7 +60,7 @@ const Page = () => {
                 </Stack>
               </Stack>
               <div>
-                <Button startIcon={<SvgIcon fontSize="small"><PlusIcon /></SvgIcon>} variant="contained">
+                <Button startIcon={<SvgIcon fontSize="small"><PlusIcon /></SvgIcon>} variant="contained" onClick={handleAddProduct}>
                   Add
                 </Button>
               </div>

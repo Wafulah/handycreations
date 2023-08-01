@@ -63,36 +63,41 @@ export const AuthProvider = (props) => {
   const { children } = props;
   const [state, dispatch] = useReducer(reducer, initialState);
   const initialized = useRef(false);
-  const initialize = () => {
+
+  const initialize = async () => {
     // Prevent from calling twice in development mode with React.StrictMode enabled
     if (initialized.current) {
-      return Promise.resolve();
+      return;
     }
-  
+
     initialized.current = true;
-  
-    return fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/admin/user/`)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          return Promise.reject(new Error('Failed to fetch user data'));
-        }
-      })
-      .then((user) => {
-        dispatch({
-          type: HANDLERS.INITIALIZE,
-          payload: user
-        });
-      })
-      .catch((error) => {
-        console.error(error);
-        dispatch({
-          type: HANDLERS.INITIALIZE
-        });
+
+    let isAuthenticated = false;
+
+    try {
+      isAuthenticated = window.sessionStorage.getItem('authenticated') === 'true';
+    } catch (err) {
+      console.error(err);
+    }
+
+    if (isAuthenticated) {
+      const user = {
+        "id": 1,
+        "avatar": "/backend/media/avatars/ID6_6FiClg1.jpg",
+        "name": "Handy",
+        "email": "handycreations@gmail.com",
+        "isAdmin": true
+      };
+      dispatch({
+        type: HANDLERS.INITIALIZE,
+        payload: user
       });
+    } else {
+      dispatch({
+        type: HANDLERS.INITIALIZE
+      });
+    }
   };
-  
 
   useEffect(
     () => {
@@ -101,7 +106,6 @@ export const AuthProvider = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
-
   const skip = () => {
     try {
       window.sessionStorage.setItem('authenticated', 'true');

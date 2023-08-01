@@ -9,28 +9,34 @@ class HomeTagSerializer(serializers.ModelSerializer):
 
 
 class HomeSerializer(serializers.ModelSerializer):
-    tag = HomeTagSerializer(many=True)
+    
 
     class Meta:
         model = Home
-        fields = ['id', 'pic', 'name', 'tag']
+        fields = ['id', 'pic', 'name','tag', 'date','featured']
 
-    def create(self, validated_data):
-        tags_data = validated_data.pop('tag')
-        home = Home.objects.create(**validated_data)
-        for tag_data in tags_data:
-            home.tag.add(HomeTag.objects.create(**tag_data))
-        return home
+    # def create(self, validated_data):
+        
+    #     tag_ids = validated_data.pop('tag')
+    #     home = Home.objects.create(**validated_data)
 
-    def update(self, instance, validated_data):
-        tags_data = validated_data.pop('tag')
-        instance.name = validated_data.get('name', instance.name)
-        instance.pic = validated_data.get('pic', instance.pic)
-        instance.save()
-        instance.tag.clear()
-        for tag_data in tags_data:
-            instance.tag.add(HomeTag.objects.create(**tag_data))
-        return instance
+    #     # Retrieve the HomeTag objects based on the tag IDs and add them to the many-to-many field
+    #     for tag_id in tag_ids:
+    #         tag = HomeTag.objects.get(id=int(tag_id))
+    #         home.tag.add(tag)
+        
+    #     return home
+
+
+    # def update(self, instance, validated_data):
+    #     tags_data = validated_data.pop('tag')
+    #     instance.name = validated_data.get('name', instance.name)
+    #     instance.pic = validated_data.get('pic', instance.pic)
+    #     instance.save()
+    #     instance.tag.clear()
+    #     for tag_data in tags_data:
+    #         instance.tag.add(HomeTag.objects.create(**tag_data))
+    #     return instance
 
 
 class InteriorDesignTagSerializer(serializers.ModelSerializer):
@@ -44,25 +50,25 @@ class InteriorDesignSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = InteriorDesign
-        fields = ['id', 'pic', 'name', 'tag']
+        fields = ['id', 'pic', 'name', 'tag','date','featured']
 
-    def create(self, validated_data):
-        tags_data = validated_data.pop('tag')
-        interior_design = InteriorDesign.objects.create(**validated_data)
-        for tag_data in tags_data:
-            interior_design.tag.add(
-                InteriorDesignTag.objects.create(**tag_data))
-        return interior_design
+    # def create(self, validated_data):
+    #     tags_data = validated_data.pop('tag')
+    #     interior_design = InteriorDesign.objects.create(**validated_data)
+    #     for tag_data in tags_data:
+    #         interior_design.tag.add(
+    #             InteriorDesignTag.objects.create(**tag_data))
+    #     return interior_design
 
-    def update(self, instance, validated_data):
-        tags_data = validated_data.pop('tag')
-        instance.name = validated_data.get('name', instance.name)
-        instance.pic = validated_data.get('pic', instance.pic)
-        instance.save()
-        instance.tag.clear()
-        for tag_data in tags_data:
-            instance.tag.add(InteriorDesignTag.objects.create(**tag_data))
-        return instance
+    # def update(self, instance, validated_data):
+    #     tags_data = validated_data.pop('tag')
+    #     instance.name = validated_data.get('name', instance.name)
+    #     instance.pic = validated_data.get('pic', instance.pic)
+    #     instance.save()
+    #     instance.tag.clear()
+    #     for tag_data in tags_data:
+    #         instance.tag.add(InteriorDesignTag.objects.create(**tag_data))
+    #     return instance
 
 
 class DesignSerializer(serializers.ModelSerializer):

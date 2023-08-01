@@ -34,6 +34,7 @@ urlpatterns = [
     path('design', views.design, name='design'),
     path('interior_design', views.interior_design, name='interior_design'),
     path('web_design', views.web_design, name='web_design'),
+    path('frames', views.frames, name='frames'),
     path('admin/user/', views.admin_user_view, name='admin_user_view'),
     path('api/search-orders', views.SearchViewSet.as_view({'post': 'search_by_order_number'}), name='search_by_order_number'),
     path('api/payment-orders/', views.PaymentViewSet.as_view({'post': 'payment_orders'}), name='payment_orders'),
